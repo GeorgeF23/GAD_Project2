@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>Login</h1>
+        {{ login_error }}
+        <form method="POST" , action="{% url 'accounts:login_view' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="login_username">Username</label>
+                <input name="login_username" type="text" class="form-control" id="login_username">
+            </div>
+            <div class="form-group">
+                <label for="login_password">Password</label>
+                <input name="login_password" type="password" class="form-control" id="login_password">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+{% endblock %}
