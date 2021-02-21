@@ -3,10 +3,17 @@
 {% block content %}
     <div class="container">
         <h1>Products</h1>
-        <ul>
+
+        <table class="table">
+            <tbody>
             {% for product in products %}
-                <li>{{ product.name }} {{ product.price }}</li>
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price }}</td>
+                    <td><a href="{% url 'storeapp:view_product' product.id %}" class="btn btn-success text-dark">View product</a></td>
+                </tr>
             {% endfor %}
-        </ul>
+            </tbody>
+        </table>
     </div>
 {% endblock %}
