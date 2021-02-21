@@ -3,8 +3,13 @@
 {% block content %}
     <div class="container">
         <h1>Login</h1>
-        {{ login_error }}
-        <form method="POST" , action="{% url 'accounts:login_view' %}">
+        {% if login_error %}
+            <div class="alert alert-danger" role="alert">
+                {{ login_error }}
+            </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'accounts:login_view' %}">
             {% csrf_token %}
             <div class="form-group">
                 <label for="login_username">Username</label>
@@ -16,5 +21,7 @@
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
+        <br><p>Don't have an account?</p>
+        <a class="btn btn-danger" href="{% url 'accounts:register_view' %}">Register</a>
     </div>
 {% endblock %}

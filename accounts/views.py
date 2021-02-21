@@ -1,8 +1,16 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+import re
 
+EMAIL_REGEX = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
 
-# Create your views here.
+SUCCESS = 0
+EMAIL_TAKEN_ERROR = 1
+USERNAME_TAKEN_ERROR = 2
+MISSING_FIELD_ERROR = 3
+INVALID_EMAIL_ERROR = 4
+
 
 def login_view(request):
     if request.method == 'GET':
@@ -22,3 +30,57 @@ def login_view(request):
             return render(request, 'accounts/login.html', {
                 'login_error': 'Invalid username or password'
             })
+
+
+def validate_register_input(username, password, first_name, last_name, email):
+    if User.objects.filter(username=username).count() > 0:
+        return USERNAME_TAKEN_ERROR
+    if User.objects.filter(email=email).count() > 0:
+        return EMAIL_TAKEN_ERROR
+
+    if len(username) == 0 or len(password) == 0 or len(first_name) == 0 or len(last_name) == 0 or len(email) == 0:
+        return MISSING_FIELD_ERROR
+
+    if not re.match(EMAIL_REGEX, email):
+        return INVALID_EMAIL_ERROR
+
+    return SUCCESS
+
+
+def register_view(request):
+    if request.method == 'GET':
+        if request.user.is_authenticated:
+            return redirect('/')
+        return render(request, 'accounts/register.html')
+
+    if request.method == 'POST':
+        username = request.POST['register_username']
+        password = request.POST['register_password']
+        first_name = request.POST['register_first_name']
+        last_name = request.POST['register_last_name']
+        email = request.POST['register_email']
+
+        valid = validate_register_input(username, password, first_name, last_name, email)
+        error_msg = None
+
+        if valid == EMAIL_TAKEN_ERROR:
+            error_msg = "Email already in use!"
+        elif valid == USERNAME_TAKEN_ERROR:
+            error_msg = "Username already taken!"
+        elif valid == MISSING_FIELD_ERROR:
+            error_msg = "All fields are necessary!"
+        elif valid == INVALID_EMAIL_ERROR:
+            error_msg = "Email is not valid!"
+
+        if valid != SUCCESS:
+            return render(request, 'accounts/register.html', {
+                'register_error': error_msg
+            })
+
+        user = User.objects.create_user(username, email, password)
+        user.last_name = last_name
+        user.first_name = first_name
+        user.save()
+
+        login(request, user)
+        return redirect('/')
