@@ -27,10 +27,10 @@
 </nav>
 
 <div class="container">
-    <h1>Categories</h1>
+    <h1>Products</h1>
     <ul>
-    {% for category in categories %}
-        <li>{{category.name}} <a href="{% url 'storeapp:view_category' category.id %}">Browse category</a></li>
+    {% for product in products %}
+        <li>{{product.name}} {{ product.price }}</li>
     {% endfor %}
 </ul>
 </div>
