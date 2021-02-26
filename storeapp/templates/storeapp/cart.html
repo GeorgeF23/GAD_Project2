@@ -19,13 +19,18 @@
                 <tr>
                     <td>{{ product.name }}</td>
                     <td>{{ product.price }}</td>
-                    <td><a href="{% url 'storeapp:view_product' product.id %}" class="btn btn-success text-dark">View
-                        product</a></td>
+                    <td>
+                        <a href="{% url 'storeapp:view_product' product.id %}" class="btn btn-success text-dark">View
+                            product</a>
+                        <a href="{% url 'storeapp:delete_from_cart' product.id %}" class="btn btn-danger text-dark">Delete
+                            from cart</a>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
 
+        <p>Total: {{ price }}</p>
         <form method="POST" action="{% url 'storeapp:finish_order' %}">
             {% csrf_token %}
             <div class="form-group">

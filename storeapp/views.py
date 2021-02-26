@@ -46,14 +46,30 @@ def add_to_cart_view(request, product_id):
 
 
 @login_required
+def delete_from_cart_view(request, product_id):
+
+    if 'cart' in request.session:
+        if product_id in request.session['cart']:
+            request.session['cart'].remove(product_id)
+            request.session.modified = True
+
+    return redirect('storeapp:view_cart')
+
+
+@login_required
 def view_cart(request):
     products = []
+    price = 0
 
     if 'cart' in request.session:
         products = get_products_from_cart(request.session['cart'])
 
+    for product in products:
+        price += product.price
+
     return render(request, 'storeapp/cart.html', {
-        "products": products
+        "products": products,
+        "price": price
     })
 
 
