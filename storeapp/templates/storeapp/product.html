@@ -5,9 +5,9 @@
         <br><br><div class="card" style="width: 75%;">
             <div class="card-body">
                 <h5 class="card-title">{{ product.name }}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">{{ product.price }}</h6>
+                <h6 class="card-subtitle mb-2 text-muted">{{ product.price }} RON</h6>
                 <p class="card-text">{{ product.description }}</p>
-                <a href="#" class="btn btn-primary">Add to cart</a>
+                <a href="{% url 'storeapp:add_to_cart' product.id %}" class="btn btn-primary">Add to cart</a>
             </div>
         </div>
     </div>

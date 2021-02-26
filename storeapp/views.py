@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.contrib.auth.decorators import login_required
 from .models import Category, Product
 
@@ -40,5 +40,19 @@ def add_to_cart_view(request, product_id):
         request.session['cart'] = []
 
     request.session['cart'].append(product_id)
+    request.session.modified = True
 
-    return redirect('storeapp:categories')
+    return redirect('storeapp:view_cart')
+
+
+@login_required
+def view_cart(request):
+    products = []
+
+    if 'cart' in request.session:
+        for product_id in request.session['cart']:
+            products.append(Product.objects.filter(pk=product_id).first())
+
+    return render(request, 'storeapp/cart.html', {
+        "products": products
+    })
