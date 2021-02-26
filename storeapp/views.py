@@ -47,7 +47,6 @@ def add_to_cart_view(request, product_id):
 
 @login_required
 def delete_from_cart_view(request, product_id):
-
     if 'cart' in request.session:
         if product_id in request.session['cart']:
             request.session['cart'].remove(product_id)
@@ -56,16 +55,26 @@ def delete_from_cart_view(request, product_id):
     return redirect('storeapp:view_cart')
 
 
+def get_products_from_cart(cart):
+    products = Product.objects.filter(pk__in=cart)
+    return products
+
+
+def get_products_price(products):
+    price = 0
+    for product in products:
+        price += product.price
+    return price
+
+
 @login_required
 def view_cart(request):
     products = []
-    price = 0
 
     if 'cart' in request.session:
         products = get_products_from_cart(request.session['cart'])
 
-    for product in products:
-        price += product.price
+    price = get_products_price(products)
 
     return render(request, 'storeapp/cart.html', {
         "products": products,
@@ -105,11 +114,6 @@ def finish_order(request):
     return render(request, 'storeapp/cart.html', {
         "success": "Order placed!"
     })
-
-
-def get_products_from_cart(cart):
-    products = Product.objects.filter(pk__in=cart)
-    return products
 
 
 @login_required
