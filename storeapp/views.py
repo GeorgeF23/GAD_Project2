@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.contrib.auth.decorators import login_required
 from .models import Category, Product, Order, OrderItem
 
@@ -94,3 +94,16 @@ def finish_order(request):
 def get_products_from_cart(cart):
     products = Product.objects.filter(pk__in=cart)
     return products
+
+
+@login_required
+def view_orders(request):
+    orders = Order.objects.filter(client=request.user).all()
+
+    for order in orders:
+        print(order)
+        print(order.products.all())
+
+    return render(request, 'storeapp/order.html', {
+        "orders": orders
+    })

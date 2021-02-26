@@ -30,7 +30,7 @@
                     <div class="dropdown-menu" aria-labelledby="profileDropown">
                         <a class="dropdown-item" href="{% url 'accounts:profile_view' %}">Your profile</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Your orders</a>
+                        <a class="dropdown-item" href="{% url 'storeapp:view_orders' %}">Your orders</a>
                         <a class="dropdown-item" href="{% url 'storeapp:view_cart' %}">View cart</a>
                     </div>
                 </li>
