@@ -3,16 +3,36 @@
 {% block content %}
     <div class="container">
         <h1>Your cart</h1>
+        {% if error %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {% endif %}
+        {% if success %}
+            <div class="alert alert-success" role="alert">
+                {{ success }}
+            </div>
+        {% endif %}
         <table class="table">
             <tbody>
             {% for product in products %}
                 <tr>
                     <td>{{ product.name }}</td>
                     <td>{{ product.price }}</td>
-                    <td><a href="{% url 'storeapp:view_product' product.id %}" class="btn btn-success text-dark">View product</a></td>
+                    <td><a href="{% url 'storeapp:view_product' product.id %}" class="btn btn-success text-dark">View
+                        product</a></td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
+
+        <form method="POST" action="{% url 'storeapp:finish_order' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="order_address">Address</label>
+                <input name="order_address" type="text" class="form-control" id="order_address" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
     </div>
 {% endblock %}

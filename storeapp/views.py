@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.contrib.auth.decorators import login_required
-from .models import Category, Product
+from .models import Category, Product, Order, OrderItem
 
 
 def categories_view(request):
@@ -50,9 +50,47 @@ def view_cart(request):
     products = []
 
     if 'cart' in request.session:
-        for product_id in request.session['cart']:
-            products.append(Product.objects.filter(pk=product_id).first())
+        products = get_products_from_cart(request.session['cart'])
 
     return render(request, 'storeapp/cart.html', {
         "products": products
     })
+
+
+@login_required
+def finish_order(request):
+    if 'cart' not in request.session or not request.session['cart']:
+        return render(request, 'storeapp/cart.html', {
+            "error": "Cart is empty!"
+        })
+
+    address = request.POST['order_address']
+    if len(address) == 0:
+        return render(request, 'storeapp/cart.html', {
+            "error": "Invalid address!"
+        })
+
+    products = []
+
+    if 'cart' in request.session:
+        products = get_products_from_cart(request.session['cart'])
+
+    order = Order(client=request.user, address=address)
+    order.save()
+
+    items = []
+    for product in products:
+        items.append(OrderItem(product_id=product.pk, order_id=order.pk, final_price=product.price))
+
+    OrderItem.objects.bulk_create(items)
+
+    request.session['cart'] = []
+    request.session.modified = True
+    return render(request, 'storeapp/cart.html', {
+        "success": "Order placed!"
+    })
+
+
+def get_products_from_cart(cart):
+    products = Product.objects.filter(pk__in=cart)
+    return products
