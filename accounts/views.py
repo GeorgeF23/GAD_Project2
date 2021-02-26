@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 import re
 
@@ -90,3 +90,9 @@ def register_view(request):
 @login_required
 def profile_view(request):
     return render(request, 'accounts/profile.html')
+
+
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect("/")
