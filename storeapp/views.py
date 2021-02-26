@@ -95,12 +95,10 @@ def finish_order(request):
             "error": "Invalid address!"
         })
 
-    products = []
+    products = get_products_from_cart(request.session['cart'])
+    price = get_products_price(products)
 
-    if 'cart' in request.session:
-        products = get_products_from_cart(request.session['cart'])
-
-    order = Order(client=request.user, address=address)
+    order = Order(client=request.user, address=address, price=price)
     order.save()
 
     items = []
