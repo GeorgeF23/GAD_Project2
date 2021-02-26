@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import Http404
+from django.contrib.auth.decorators import login_required
 from .models import Category, Product
 
 
@@ -30,5 +31,14 @@ def product_view(request, product_id):
     })
 
 
+@login_required
 def add_to_cart_view(request, product_id):
-    pass
+    if not Product.objects.filter(pk=product_id).exists():
+        raise Http404("Product does not exist!")
+
+    if 'cart' not in request.session:
+        request.session['cart'] = []
+
+    request.session['cart'].append(product_id)
+
+    return redirect('storeapp:categories')
