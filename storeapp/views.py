@@ -118,10 +118,6 @@ def finish_order(request):
 def view_orders(request):
     orders = Order.objects.filter(client=request.user).all()
 
-    for order in orders:
-        print(order)
-        print(order.products.all())
-
     return render(request, 'storeapp/order.html', {
         "orders": orders
     })

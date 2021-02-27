@@ -35,11 +35,19 @@ class Product(models.Model):
 
 
 class Order(models.Model):
+    STATUS_CHOICES = (
+        ('R', 'Received'),  # order received by the store
+        ('P', 'Processed'), # the store processed the order and will send it to the courier
+        ('D', 'Delivered'), # the store gave the package to the courier
+    )
+
     products = models.ManyToManyField(Product, through='OrderItem')
     client = models.ForeignKey(AuthUserModel, on_delete=models.CASCADE)
     address = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='R')
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 class OrderItem(models.Model):
