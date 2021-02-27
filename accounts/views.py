@@ -2,6 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.conf import settings
 import re
 
 EMAIL_REGEX = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
@@ -48,6 +50,21 @@ def validate_register_input(username, password, first_name, last_name, email):
     return SUCCESS
 
 
+def send_register_email(user):
+    subject = 'GAD Store account'
+    message = f'Hello, {user.first_name}!\nThank you for registering an account to our store!'
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [user.email]
+
+    send_mail(
+        subject,
+        message,
+        email_from,
+        recipient_list,
+        fail_silently=False
+    )
+
+
 def register_view(request):
     if request.method == 'GET':
         if request.user.is_authenticated:
@@ -82,6 +99,8 @@ def register_view(request):
         user.last_name = last_name
         user.first_name = first_name
         user.save()
+
+        send_register_email(user)
 
         login(request, user)
         return redirect('/')

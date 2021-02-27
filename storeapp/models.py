@@ -67,10 +67,6 @@ class Order(models.Model):
             recipient_list,
             fail_silently=False
         )
-    #
-    # def save(self, *args, **kwargs):
-    #     super(Order, self).save(*args, **kwargs)
-    #     self.send_update_email()
 
 
 class OrderItem(models.Model):
