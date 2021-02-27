@@ -9,6 +9,13 @@ class ProductAdmin(admin.ModelAdmin):
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('client', 'address', 'price', 'status')
 
+    def save_model(self, request, obj, form, change):
+        if 'status' in form.changed_data:
+            print(form.instance.get_status_display())
+        else:
+            print('Nu s-a schimbat')
+        super(OrderAdmin, self).save_model(request, obj, form, change)
+
 
 class OrderItemAdmin(admin.ModelAdmin):
     list_display = ('order', 'product', 'final_price')
