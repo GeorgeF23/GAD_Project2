@@ -11,9 +11,8 @@ class OrderAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         if 'status' in form.changed_data:
-            print(form.instance.get_status_display())
-        else:
-            print('Nu s-a schimbat')
+            obj.send_update_email()
+
         super(OrderAdmin, self).save_model(request, obj, form, change)
 
 

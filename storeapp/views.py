@@ -109,6 +109,8 @@ def finish_order(request):
 
     request.session['cart'] = []
     request.session.modified = True
+
+    order.send_update_email(new_order=True)
     return render(request, 'storeapp/cart.html', {
         "success": "Order placed!"
     })
